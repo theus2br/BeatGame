@@ -6,7 +6,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Data
 public class Games implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -20,4 +19,41 @@ public class Games implements Serializable {
     private Integer hoursPlayed;
 
     private Integer progress;
+
+
+    public String getNameGame() {
+        return nameGame;
+    }
+
+    public void setNameGame(String nameGame) {
+        this.nameGame = nameGame;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getHoursPlayed() {
+        return hoursPlayed;
+    }
+
+    public void setHoursPlayed(Integer hoursPlayed) {
+        this.hoursPlayed = hoursPlayed;
+    }
+
+    public Integer getProgress() {
+        return progress;
+    }
+
+    public void setProgress(Integer progress) {
+        this.progress = progress;
+    }
 }
