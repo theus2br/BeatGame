@@ -32,7 +32,7 @@ public class GamesController {
 
     //Filtrar um jogo
     @GetMapping(path = "/{nameGame}")
-    public Games findGameByName(@PathVariable String nameGame) {
+    public List<Games> findGameByName(@PathVariable String nameGame) {
         return gameService.getGame(nameGame);
     }
 
@@ -44,5 +44,12 @@ public class GamesController {
         }catch (Exception e){
             throw new Exception(e);
         }
+    }
+
+    //Editar algum campo
+    @PutMapping(path = "update/{nameGame}")
+    public String updateGame(@RequestBody Games game){
+        gameService.updateGame(game);
+        return "Atualizado";
     }
 }

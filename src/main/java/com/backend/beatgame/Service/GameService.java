@@ -27,8 +27,8 @@ public class GameService {
     }
 
     //Buscar Game
-    public Games getGame(String nameGame) {
-        return gamesRepository.findGameBynameGame(nameGame);
+    public List<Games> getGame(String nameGame) {
+        return gamesRepository.findListGameBynameGame(nameGame);
     }
 
     //Listar todos os jogos
@@ -42,5 +42,10 @@ public class GameService {
         Response newResponse = new Response();
         newResponse.setResult("Jogo " + nameGame + " deletado com sucesso!");
         return newResponse;
+    }
+
+    public String updateGame(Games game){
+        gamesRepository.save(game);
+        return "Sucesso";
     }
 }
