@@ -27,25 +27,37 @@ public class GameService {
     }
 
     //Buscar Game
-    public List<Games> getGame(String nameGame) {
-        return gamesRepository.findListGameBynameGame(nameGame);
+    public Response getGame(String nameGame) {
+        List<Games> listGames = gamesRepository.findListGameBynameGameOrderByNameGame(nameGame);
+        Response getResponse = new Response();
+        if(listGames.isEmpty()){
+            getResponse.setResult("Nenhum jogo encontrado!");
+            return getResponse;
+        }else{
+            getResponse.setListResult(listGames);
+            return getResponse;
+        }
     }
 
     //Listar todos os jogos
     public List<Games> getListGames() {
-        return (List<Games>) gamesRepository.findAll();
+        return gamesRepository.findAllByOrderByNameGame();
     }
 
     //Apagar jogo
-    public Response deleteGame(String nameGame) throws Exception {
-        gamesRepository.delete(gamesRepository.findGameBynameGame(nameGame));
+    public Response deleteGame(String nameGame, Long id) throws Exception {
+        gamesRepository.delete(gamesRepository.findGamesBynameGameAndId(nameGame, id));
         Response newResponse = new Response();
         newResponse.setResult("Jogo " + nameGame + " deletado com sucesso!");
         return newResponse;
     }
 
+    //Atualizar jogo
     public String updateGame(Games game){
         gamesRepository.save(game);
         return "Sucesso";
     }
+
+    //Listar favoritos
+    public List<Games> getFavoritesGames(){ return (List<Games>) gamesRepository.findAllByFavoritesIsTrue();}
 }

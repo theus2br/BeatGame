@@ -32,15 +32,15 @@ public class GamesController {
 
     //Filtrar um jogo
     @GetMapping(path = "/{nameGame}")
-    public List<Games> findGameByName(@PathVariable String nameGame) {
+    public Response findGameByName(@PathVariable String nameGame) {
         return gameService.getGame(nameGame);
     }
 
     //Deletar um jogo
-    @DeleteMapping(path = "delete/{nameGame}")
-    public ResponseEntity<?> deleteGame(@PathVariable String nameGame) throws Exception {
+    @DeleteMapping(path = "delete/{nameGame}/{id}")
+    public ResponseEntity<?> deleteGame(@PathVariable String nameGame, @PathVariable Long id) throws Exception {
         try {
-            return new ResponseEntity<>(gameService.deleteGame(nameGame), HttpStatus.OK);
+            return new ResponseEntity<>(gameService.deleteGame(nameGame, id), HttpStatus.OK);
         }catch (Exception e){
             throw new Exception(e);
         }
@@ -51,5 +51,10 @@ public class GamesController {
     public String updateGame(@RequestBody Games game){
         gameService.updateGame(game);
         return "Atualizado";
+    }
+
+    @GetMapping(path = "/favorites")
+    public List<Games> getFavoritesGames(){
+        return gameService.getFavoritesGames();
     }
 }
