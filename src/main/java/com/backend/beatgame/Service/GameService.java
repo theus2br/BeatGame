@@ -1,8 +1,10 @@
 package com.backend.beatgame.Service;
 
+import com.backend.beatgame.Model.GameListException;
 import com.backend.beatgame.Model.Games;
 import com.backend.beatgame.Model.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +16,9 @@ public class GameService {
     @Autowired
     private GamesRepository gamesRepository;
 
-    //Salvar jogo
+    Response newResponse = new Response();
+
+      //Salvar jogo
     public Response saveGame(Games gameBody) throws Exception {
         Response newResponse = new Response();
         try {
@@ -27,27 +31,24 @@ public class GameService {
     }
 
     //Buscar Game
-    public Response getGame(String nameGame) {
+    public List<Games> getGame(String nameGame) throws GameListException {
         List<Games> listGames = gamesRepository.findListGameBynameGameOrderByNameGame(nameGame);
-        Response getResponse = new Response();
-        if(listGames.isEmpty()){
-            getResponse.setResult("Nenhum jogo encontrado!");
-            return getResponse;
-        }else{
-            getResponse.setListResult(listGames);
-            return getResponse;
-        }
+        if(listGames.isEmpty())
+            throw new GameListException("Nenhum jogo encontrado com este nome!");
+        else return listGames;
     }
 
     //Listar todos os jogos
-    public List<Games> getListGames() {
-        return gamesRepository.findAllByOrderByNameGame();
+    public List<Games> getListGames() throws GameListException{
+        List<Games> listGames = gamesRepository.findAllByOrderByNameGame();
+        if(listGames.isEmpty())
+            throw new GameListException("Nenhum jogo encontrado!");
+        else return listGames;
     }
 
     //Apagar jogo
-    public Response deleteGame(String nameGame, Long id) throws Exception {
+    public Response deleteGame(String nameGame, Long id) throws GameListException {
         gamesRepository.delete(gamesRepository.findGamesBynameGameAndId(nameGame, id));
-        Response newResponse = new Response();
         newResponse.setResult("Jogo " + nameGame + " deletado com sucesso!");
         return newResponse;
     }
@@ -59,5 +60,10 @@ public class GameService {
     }
 
     //Listar favoritos
-    public List<Games> getFavoritesGames(){ return (List<Games>) gamesRepository.findAllByFavoritesIsTrue();}
+    public List<Games> getFavoritesGames() throws GameListException{
+        List<Games> listGames = gamesRepository.findAllByFavoritesIsTrue();
+        if(listGames.isEmpty())
+            throw new GameListException("Nenhum jogo nos favoritos");
+        else return listGames;
+    }
 }

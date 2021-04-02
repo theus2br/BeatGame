@@ -1,15 +1,13 @@
 package com.backend.beatgame.Controller;
 
+import com.backend.beatgame.Model.GameListException;
 import com.backend.beatgame.Model.Games;
 import com.backend.beatgame.Model.Response;
 import com.backend.beatgame.Service.GameService;
-import com.backend.beatgame.Service.GamesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("beatgame")
@@ -17,6 +15,8 @@ public class GamesController {
 
     @Autowired
     private GameService gameService;
+
+    private Response newResponse = new Response();
 
     //Gravar jogo
     @PostMapping
@@ -26,23 +26,34 @@ public class GamesController {
 
     //Buscar todos
     @GetMapping()
-    public List<Games> findAllGames() {
-        return (List<Games>) gameService.getListGames();
+    public ResponseEntity<?> findAllGames() {
+        try {
+            return new ResponseEntity<>(gameService.getListGames(), HttpStatus.OK);
+        }catch(GameListException e){
+            newResponse.setResult(e.getMessage());
+            return new ResponseEntity<>(newResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     //Filtrar um jogo
     @GetMapping(path = "/{nameGame}")
-    public Response findGameByName(@PathVariable String nameGame) {
-        return gameService.getGame(nameGame);
+    public ResponseEntity<?> findGameByName(@PathVariable String nameGame) {
+        try{
+            return new ResponseEntity<>(gameService.getGame(nameGame), HttpStatus.OK);
+        }catch (GameListException e){
+            newResponse.setResult(e.getMessage());
+            return new ResponseEntity<>(newResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     //Deletar um jogo
     @DeleteMapping(path = "delete/{nameGame}/{id}")
-    public ResponseEntity<?> deleteGame(@PathVariable String nameGame, @PathVariable Long id) throws Exception {
+    public ResponseEntity<?> deleteGame(@PathVariable String nameGame, @PathVariable Long id) throws GameListException {
         try {
             return new ResponseEntity<>(gameService.deleteGame(nameGame, id), HttpStatus.OK);
-        }catch (Exception e){
-            throw new Exception(e);
+        }catch (GameListException e){
+            throw new GameListException("Nenhum jogo encontrado no banco de dados");
         }
     }
 
@@ -53,8 +64,14 @@ public class GamesController {
         return "Atualizado";
     }
 
+    //favoritar Jogos
     @GetMapping(path = "/favorites")
-    public List<Games> getFavoritesGames(){
-        return gameService.getFavoritesGames();
+    public ResponseEntity<?> getFavoritesGames() throws GameListException {
+        try {
+            return new ResponseEntity<>(gameService.getFavoritesGames(), HttpStatus.OK);
+        }catch(GameListException e){
+            newResponse.setResult(e.getMessage());
+            return new ResponseEntity<>(newResponse, HttpStatus.OK);
+        }
     }
 }
